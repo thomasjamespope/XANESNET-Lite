@@ -444,9 +444,11 @@ class E3EE(nn.Module):
         self.attention_heads = attention_heads
         self.attention_rbf_dim = attention_rbf_dim
         self.att_cutoff = att_cutoff
-        self.energy_min = float(energy_min)
-        self.energy_max = float(energy_max)
         self.out_size = out_size
+        self.energy_min = 0.0
+        self.energy_max = float(out_size - 1)
+        #self.energy_min = float(energy_min)
+        #self.energy_max = float(energy_max)
         self.residual_scale_init = residual_scale_init
         self.atom_encoder = EquivariantAtomEncoder(
             max_z=max_z,
@@ -503,21 +505,14 @@ class E3EE(nn.Module):
         energies: torch.Tensor,
     ) -> torch.Tensor:
         if energies.ndim == 1:
-            energy_grid = energies
+            n_energy = energies.shape[0]
         elif energies.ndim == 2:
             if energies.shape[0] != x.shape[0]:
                 raise ValueError("Batched energy grid has incompatible batch dimension: energies={tuple(energies.shape)}, x={tuple(x.shape)}" )
-            energy_grid = energies[0]
-            if not torch.allclose(
-                energies,
-                energy_grid.unsqueeze(0).expand_as(energies),
-                rtol=1e-6,
-                atol=1e-7,
-            ):
-                raise ValueError("Each spectrum must use the same energy grid within a batch.")
+            n_energy = energies.shape[1]
         else:
             raise ValueError(f"energies must have shape [nE] or [B, nE], got {tuple(energies.shape)}")    
-        energies = energy_grid
+        energies = torch.arange(n_energy,device=x.device,dtype=torch.float32)
         batch_size = x.shape[0]
         device = x.device
         e_feat = self.energy_embedding(energies.to(dtype=torch.float32))
