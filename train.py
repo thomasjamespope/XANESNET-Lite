@@ -26,7 +26,7 @@ def main(args: list[str]) -> None:
     datamodule = LightningE3EEDataModule(
         xyz_dir=Path(args_namespace.xyzs),
         spectrum_dir=Path(args_namespace.spcs),
-        batch_size=32,
+        batch_size=16,
         num_workers=0,
         train_fraction=0.8,
         cutoff=5.0,
@@ -51,11 +51,11 @@ def main(args: list[str]) -> None:
         "head_hidden_dim": 128,
         "out_mlp_layers": 3,
     }
-    model = LightningE3EEModelModule(model_kwargs=model_kwargs,learning_rate=1e-2)
+    model = LightningE3EEModelModule(model_kwargs=model_kwargs,learning_rate=1e-3)
     trainer = pl.Trainer(
         accelerator="cuda",
         devices=2,
-        max_epochs=200,
+        max_epochs=1000,
         enable_progress_bar=True,
         log_every_n_steps=1,
         callbacks=[

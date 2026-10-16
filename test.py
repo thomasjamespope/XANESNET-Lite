@@ -39,7 +39,7 @@ def main(args: list[str]) -> None:
     datamodule = LightningE3EEDataModule(
         xyz_dir=xyz_dir,
         spectrum_dir=spectrum_dir,
-        batch_size=32,
+        batch_size=16,
         num_workers=0,
         train_fraction=1.0,
         cutoff=5.0,
