@@ -620,5 +620,7 @@ class LightningE3EEModelModule(pl.LightningModule):
         return loss
 # ============================================================================
     def configure_optimizers(self):
-        return torch.optim.AdamW(self.parameters(),lr=self.learning_rate)
+        optimizer = torch.optim.AdamW(self.parameters(),lr=self.learning_rate)
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+        return [optimizer], [scheduler]
 # ============================================================================

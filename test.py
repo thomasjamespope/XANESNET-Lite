@@ -39,7 +39,7 @@ def main(args: list[str]) -> None:
     datamodule = LightningE3EEDataModule(
         xyz_dir=xyz_dir,
         spectrum_dir=spectrum_dir,
-        batch_size=64,
+        batch_size=32,
         num_workers=0,
         train_fraction=1.0,
         cutoff=5.0,
@@ -51,7 +51,7 @@ def main(args: list[str]) -> None:
     model.eval()
     trainer = pl.Trainer(
         accelerator="cuda",
-        devices=4,
+        devices=2,
         logger=False,
         enable_checkpointing=False,
         enable_progress_bar=True,
@@ -74,6 +74,7 @@ def main(args: list[str]) -> None:
                 sample_id = str(sample_id)
                 output_file = prediction_dir / f"{sample_id}.txt"
                 with output_file.open("w") as handle:
+                    handle.write("\n\n")
                     for energy, value in zip(energies[0],prediction[sample_idx]):
                         handle.write(f"{energy.item():.10f} {value.item():.10f}\n")
     print("Inference complete")

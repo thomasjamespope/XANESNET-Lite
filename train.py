@@ -51,10 +51,10 @@ def main(args: list[str]) -> None:
         "head_hidden_dim": 128,
         "out_mlp_layers": 3,
     }
-    model = LightningE3EEModelModule(model_kwargs=model_kwargs,learning_rate=5e-3)
+    model = LightningE3EEModelModule(model_kwargs=model_kwargs,learning_rate=1e-2)
     trainer = pl.Trainer(
         accelerator="cuda",
-        devices=4,
+        devices=2,
         max_epochs=200,
         enable_progress_bar=True,
         log_every_n_steps=1,
